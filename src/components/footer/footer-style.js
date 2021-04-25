@@ -1,4 +1,7 @@
 import styled, { css } from 'styled-components/native'
+import GlobalStyle from '../../global-style/global-style'
+
+const footerSize = 50
 
 const Footer = styled.View`
   margin-top: 20px;
@@ -22,13 +25,13 @@ const FooterItem = styled.TouchableOpacity`
   background-color: #fff;
   align-items: center;
   justify-content: center;
-  height: 50px;
+  height: ${footerSize}px;
   background-color: #000;
 
   ${props =>
     props.selected &&
     css`
-      background-color: #ba9402;
+      background-color: ${GlobalStyle.primaryColor};
     `}
 `
 
@@ -37,4 +40,4 @@ const FooterItemText = styled.Text`
   font-size: 20px;
   color: #fff;
 `
-export { Footer, FooterItem, FooterItemText }
+export { Footer, FooterItem, FooterItemText, footerSize }

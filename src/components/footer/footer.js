@@ -1,37 +1,47 @@
 import React, { useState } from 'react'
 
-import { ButtonGroup, Icon, Button } from 'react-native-elements'
-import { StyleSheet, Text, View } from 'react-native'
+import { Icon } from 'react-native-elements'
 import { FooterItem, Footer as FooterStyle, FooterItemText } from './footer-style'
+import Routes from '../../models/routes'
 
-const Footer = () => {
-  const footerItems = {
-    tracking: 'tracking',
-    config: 'config',
-  }
-  const [selectedItem, setSelectedItem] = useState(footerItems.tracking)
+const icons = {
+  [Routes.tracking]: 'search',
+  [Routes.settings]: 'cogs',
+}
 
-  const handlerOnPressTracking = () => {
-    if (selectedItem === footerItems.tracking) return
+const Footer = ({ state, descriptors, navigation }) => {
+  const tabs = state.routes.map((route, index) => {
+    const { options } = descriptors[route.key]
+    const selected = state.index === index
 
-    setSelectedItem(footerItems.tracking)
-  }
-  const handlerOnPressConfig = () => {
-    if (selectedItem === footerItems.config) return
+    const handlerOnPress = () => {
+      const event = navigation.emit({
+        type: 'tabPress',
+        target: route.key,
+      })
 
-    setSelectedItem(footerItems.config)
-  }
+      if (!selected && !event.defaultPrevented) {
+        navigation.navigate(route.name)
+      }
+    }
+
+    return {
+      route: route.name,
+      title: options.title,
+      selected,
+      handlerOnPress,
+      icon: icons[route.name],
+    }
+  })
 
   return (
     <FooterStyle>
-      <FooterItem onPress={handlerOnPressTracking} selected={selectedItem === footerItems.tracking}>
-        <Icon type="font-awesome" name="search" color="#fff" />
-        <FooterItemText>rastreio</FooterItemText>
-      </FooterItem>
-      <FooterItem onPress={handlerOnPressConfig} selected={selectedItem === footerItems.config}>
-        <Icon type="font-awesome" name="cogs" color="#fff" />
-        <FooterItemText>configurações</FooterItemText>
-      </FooterItem>
+      {tabs.map(tab => (
+        <FooterItem key={tab.route} onPress={tab.handlerOnPress} selected={tab.selected} accessibilityRole="button" accessibilityLabel={tab.route}>
+          <Icon type="font-awesome" name={tab.icon} color="#fff" />
+          <FooterItemText>{tab.title}</FooterItemText>
+        </FooterItem>
+      ))}
     </FooterStyle>
   )
 }
